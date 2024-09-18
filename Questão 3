@@ -1,34 +1,57 @@
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 public class FaturamentoDistribuidora {
 
     public static void main(String[] args) {
-        double[] faturamentoDiario = {1200.5, 850.3, 920.4, 2000.0, 1800.2, 1100.0, 950.5, 1050.7, 1750.9, 2300.6, 
-                                      2100.0, 1900.8, 1700.5, 1400.3, 1600.0, 1350.0, 1900.4, 2050.1, 1000.2, 900.0};
+        try {
+            FileReader reader = new FileReader("faturamento.json");
+            JsonElement jsonElement = JsonParser.parseReader(reader);
+            JsonArray faturamentoArray = jsonElement.getAsJsonArray();
 
-        double menorFaturamento = faturamentoDiario[0];
-        double maiorFaturamento = faturamentoDiario[0];
-        double somaFaturamento = 0.0;
-        int diasAcimaDaMedia = 0;
+            List<Double> faturamentosValidos = new ArrayList<>();
+            double somaFaturamento = 0.0;
+            double menorFaturamento = Double.MAX_VALUE;
+            double maiorFaturamento = Double.MIN_VALUE;
+            
+            for (JsonElement element : faturamentoArray) {
+                JsonObject faturamentoDia = element.getAsJsonObject();
+                double valor = faturamentoDia.get("valor").getAsDouble();
 
-        for (double faturamento : faturamentoDiario) {
-            if (faturamento < menorFaturamento) {
-                menorFaturamento = faturamento;
+                if (valor > 0.0) {
+                    faturamentosValidos.add(valor);
+                    somaFaturamento += valor;
+                    
+                    if (valor < menorFaturamento) {
+                        menorFaturamento = valor;
+                    }
+                    if (valor > maiorFaturamento) {
+                        maiorFaturamento = valor;
+                    }
+                }
             }
-            if (faturamento > maiorFaturamento) {
-                maiorFaturamento = faturamento;
+
+            double mediaMensal = somaFaturamento / faturamentosValidos.size();
+            int diasAcimaDaMedia = 0;
+
+            for (double valor : faturamentosValidos) {
+                if (valor > mediaMensal) {
+                    diasAcimaDaMedia++;
+                }
             }
-            somaFaturamento += faturamento;
+
+            System.out.println("Menor valor de faturamento: " + menorFaturamento);
+            System.out.println("Maior valor de faturamento: " + maiorFaturamento);
+            System.out.println("Número de dias com faturamento acima da média: " + diasAcimaDaMedia);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        double mediaMensal = somaFaturamento / faturamentoDiario.length;
-
-        for (double faturamento : faturamentoDiario) {
-            if (faturamento > mediaMensal) {
-                diasAcimaDaMedia++;
-            }
-        }
-
-        System.out.println("Menor valor de faturamento: " + menorFaturamento);
-        System.out.println("Maior valor de faturamento: " + maiorFaturamento);
-        System.out.println("Número de dias com faturamento acima da média: " + diasAcimaDaMedia);
     }
 }
