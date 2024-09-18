@@ -1,0 +1,34 @@
+public class FaturamentoDistribuidora {
+
+    public static void main(String[] args) {
+        double[] faturamentoDiario = {1200.5, 850.3, 920.4, 2000.0, 1800.2, 1100.0, 950.5, 1050.7, 1750.9, 2300.6, 
+                                      2100.0, 1900.8, 1700.5, 1400.3, 1600.0, 1350.0, 1900.4, 2050.1, 1000.2, 900.0};
+
+        double menorFaturamento = faturamentoDiario[0];
+        double maiorFaturamento = faturamentoDiario[0];
+        double somaFaturamento = 0.0;
+        int diasAcimaDaMedia = 0;
+
+        for (double faturamento : faturamentoDiario) {
+            if (faturamento < menorFaturamento) {
+                menorFaturamento = faturamento;
+            }
+            if (faturamento > maiorFaturamento) {
+                maiorFaturamento = faturamento;
+            }
+            somaFaturamento += faturamento;
+        }
+
+        double mediaMensal = somaFaturamento / faturamentoDiario.length;
+
+        for (double faturamento : faturamentoDiario) {
+            if (faturamento > mediaMensal) {
+                diasAcimaDaMedia++;
+            }
+        }
+
+        System.out.println("Menor valor de faturamento: " + menorFaturamento);
+        System.out.println("Maior valor de faturamento: " + maiorFaturamento);
+        System.out.println("Número de dias com faturamento acima da média: " + diasAcimaDaMedia);
+    }
+}
